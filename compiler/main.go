@@ -57,6 +57,9 @@ func ReadWysb(filename string) {
 
 	ci := cutinfo.New()
 
+
+
+
 	keywords_sum := []string{"<math.sum"}
 
 	// Conte as palavras-chave no conteúdo do arquivo
@@ -82,6 +85,8 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, rsult_str, i))
 
 	}
+
+
 
 	keywords_sub := []string{"<math.sub"}
 
@@ -217,6 +222,20 @@ func ReadWysb(filename string) {
 
 	}
 
+	keywords_input := []string{"<io.input"}
+
+	// Conte as palavras-chave no conteúdo do arquivo
+	counts_input := countKeywords(string(content), keywords_input)
+	for i := 1; i <= counts_input; i++ {
+		input := ci.Target(string(content), "<io.input", ">")
+		allocate := ci.Target(input, " ", "!")
+		var inp string
+		fmt.Scanln(&inp)
+		gc.Set(allocate, inp)
+		replacer := "<io.input " + allocate + "!>"
+		content = []byte(strings.Replace(string(content), replacer, inp, i))
+		}
+
 	keywords_openFile := []string{"<os.ReadFile"}
 
 	// Conte as palavras-chave no conteúdo do arquivo
@@ -334,6 +353,8 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
 
+
+
 	keywords_bool := []string{"$[bool]"}
 
 	// Conte as palavras-chave no conteúdo do arquivo
@@ -382,6 +403,8 @@ func ReadWysb(filename string) {
 		replacer := "${" + var_f32 + "}"
 		content = []byte(strings.Replace(string(content), replacer, findVarStr, i))
 	}
+
+
 
 	
 
@@ -679,10 +702,26 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
 
+	keywords_writefile := []string{"<os.WriteFile"}
 
-
-
+	// Conte as palavras-chave no conteúdo do arquivo
+	counts_writefile := countKeywords(string(content), keywords_writefile)
+	for i := 1; i <= counts_writefile; i++ {
+		fileopen := ci.Target(string(content), "<os.WriteFile", ">")
+		filedir := ci.Target(fileopen, " ", " ::")
+		filecontent := ci.Target(fileopen, ":: ", "!")
+		data := []byte(filecontent)
+		if err := os.WriteFile(filedir, data, 0644); err != nil {
+    		panic(err)
 }
+replacer := "<os.WriteFile " + filedir + " :: " + filecontent + "!>"
+content = []byte(strings.Replace(string(content), replacer, "", i))
+		}
+
+
+	}
+
+
 
 func execFunc(data string) {
 	logger.Info(context.Background(), "Executing function: "+data)
