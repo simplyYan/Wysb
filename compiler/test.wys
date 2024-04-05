@@ -1,8 +1,9 @@
+$[int32] idade = ${soma}>;
+$[int32] soma = <math.sum 5 + 6!>>;
+
+
 !fun test() {
-    println("test")
+    println("test ${idade}")
 }
 
-$[int32] idade = 5>;
-$[float64] peso = 54.53>;
-$[float32] peso = 54.53>;
 
