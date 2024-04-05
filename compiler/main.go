@@ -216,6 +216,30 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, rsult_str, i))
 
 	}
+
+	keywords_openFile := []string{"<os.ReadFile"}
+
+	// Conte as palavras-chave no conteúdo do arquivo
+	counts_openFile := countKeywords(string(content), keywords_openFile)
+	for i := 1; i <= counts_openFile; i++ {
+		fileopen := ci.Target(string(content), "<os.ReadFile", ">")
+		target := ci.Target(fileopen, " ", "!")
+		thisfile, err := os.Open(target) 
+		if err != nil {
+			log.Fatal(err)
+		}
+	
+		thiscontent, err := io.ReadAll(thisfile)
+		if err != nil {
+			panic(err)
+		}
+
+
+		replacer := "<os.ReadFile " + target + "!>"
+
+		content = []byte(strings.Replace(string(content), replacer, string(thiscontent), i))
+
+	}
 	//Variables
 
 	for i := 1; i <= counts; i++ {
@@ -321,6 +345,20 @@ func ReadWysb(filename string) {
 		gc.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[bool] " + var_f32_name + " = " + var_f32_value
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+	}
+
+	keywords_array := []string{"$[array]"}
+
+	// Conte as palavras-chave no conteúdo do arquivo
+	counts_array := countKeywords(string(content), keywords_array)
+	for i := 1; i <= counts_array; i++ {
+		var_f32 := ci.Target(string(content), "$[bool]", ";")
+		var_f32_name := ci.Target(var_f32, " ", " =")
+		var_f32_value := ci.Target(var_f32, "= ", ">")
+		gc.Set(var_f32_name, var_f32_value)
+		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
+		replacer := "$[array] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
 
