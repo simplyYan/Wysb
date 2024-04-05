@@ -1,0 +1,8 @@
+!fun test() {
+    println("test")
+}
+
+$[int32] idade = 5>;
+$[float64] peso = 54.53>;
+$[float32] peso = 54.53>;
+
