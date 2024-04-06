@@ -1,0 +1,56 @@
+.nav a {
+    color: aquamarine;
+}
+
+.nav a:hover {
+    text-decoration: underline;
+    color: #00ffff;
+}
+
+body {
+    background-color: #111111;
+    color: white
+}
+
+.hero {
+    padding-top: 250px;
+    text-align: center;
+    align-items: center;
+    background: url(herobg.png);
+    width: 100%;
+    height: 720px;
+    background-position: center;
+    background-size: 100%;
+}
+
+.features {
+    padding-top: 250px;
+    text-align: center;
+    align-items: center;
+    background: url(features.png);
+    width: 100%;
+    height: 720px;
+    background-position: center;
+    background-size: 100%;
+    image-rendering: optimizeQuality;
+}
+
+.herocontent {
+    padding-top: 150px;
+}
+
+.hero button {
+    background-color: black;
+    color: aquamarine;
+    border-radius: 20px;
+}
+
+.hero button:hover {
+    background-color: black;
+    text-decoration: line-through;
+    text-decoration-color: white;
+    text-decoration-style: solid;
+    text-decoration-thickness: 3px;
+    color: white;
+    border-radius: 98px;
+}
