@@ -1,4 +1,5 @@
 ![Wysb](./logo.png)
+-------------------
 Wysb is a general-purpose high-level programming language developed by Wesley Yan Soares Brehmer (who lives up to the name of the language, which is short for the author's name) to be an easy, fast, reliable, secure, broad and lightweight solution. Despite being high-level, Wysb has insane performance, reaching the same level as low-level languages.
 
 ## Main features
