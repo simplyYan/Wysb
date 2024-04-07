@@ -70,8 +70,6 @@ func checkInternetConnection() bool {
 	return true
 }
 
-
-
 func execShellScript(script string) error {
 	var comando string
 
@@ -99,7 +97,7 @@ func execBatchScript(script string) error {
 		comando = "cmd /c " + script
 	default:
 
-		return fmt.Errorf("BatchScripts não são suportados em sistemas Unix")
+		return fmt.Errorf("BatchScripts are not supported on Unix systems")
 	}
 
 	cmd := exec.Command(comando)
@@ -115,28 +113,23 @@ func addFileToZip(zipWriter *zip.Writer, filename string) error {
     }
     defer fileToZip.Close()
 
-    // Obtém informações sobre o arquivo
     fileInfo, err := fileToZip.Stat()
     if err != nil {
         return err
     }
 
-    // Cria um cabeçalho zip para o arquivo
     header, err := zip.FileInfoHeader(fileInfo)
     if err != nil {
         return err
     }
 
-    // Define o nome do arquivo no arquivo zip
     header.Name = filepath.Base(filename)
 
-    // Adiciona o cabeçalho ao arquivo zip
     writer, err := zipWriter.CreateHeader(header)
     if err != nil {
         return err
     }
 
-    // Copia o conteúdo do arquivo para o arquivo zip
     _, err = io.Copy(writer, fileToZip)
     return err
 }
@@ -176,6 +169,17 @@ func ReadWysb(filename string) {
 
 	ci := cutinfo.New()
 
+	keywords_extends := []string{"<extends"}
+
+	counts_extends := countKeywords(string(content), keywords_extends)
+	for i := 1; i == counts_extends; i++ {
+		extender := ci.Target(string(content), "<extends ", "!>")
+		ReadWysb(extender)
+		replacer := "<extends " + extender + "!>"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
 	keywords_convertStr := []string{"<to.string"}
 
 	counts_convertStr := countKeywords(string(content), keywords_convertStr)
@@ -197,12 +201,12 @@ func ReadWysb(filename string) {
 		var_num2 := ci.Target(var_sum, "+ ", "!")
 		num1, err := strconv.Atoi(var_num1)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 		num2, err := strconv.Atoi(var_num2)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 
@@ -213,8 +217,6 @@ func ReadWysb(filename string) {
 
 	}
 
-
-
 	keywords_sub := []string{"<math.sub"}
 
 	counts_sub := countKeywords(string(content), keywords_sub)
@@ -224,12 +226,12 @@ func ReadWysb(filename string) {
 		var_num2 := ci.Target(var_sum, "- ", "!")
 		num1, err := strconv.Atoi(var_num1)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 		num2, err := strconv.Atoi(var_num2)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 
@@ -249,12 +251,12 @@ func ReadWysb(filename string) {
 		var_num2 := ci.Target(var_sum, "/ ", "!")
 		num1, err := strconv.Atoi(var_num1)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 		num2, err := strconv.Atoi(var_num2)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 
@@ -274,12 +276,12 @@ func ReadWysb(filename string) {
 		var_num2 := ci.Target(var_sum, "* ", "!")
 		num1, err := strconv.Atoi(var_num1)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 		num2, err := strconv.Atoi(var_num2)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 
@@ -308,12 +310,12 @@ func ReadWysb(filename string) {
 		var_num2 := ci.Target(var_sum, ":: ", "!")
 		num1, err := strconv.Atoi(var_num1)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 		num2, err := strconv.Atoi(var_num2)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 
@@ -332,7 +334,7 @@ func ReadWysb(filename string) {
 		var_num1 := ci.Target(var_sum, " ", "!")
 		num1, err := strconv.Atoi(var_num1)
 		if err != nil {
-			fmt.Println("Erro ao converter string para inteiro:", err)
+			fmt.Println("Error converting string to integer:", err)
 			return
 		}
 
@@ -384,7 +386,6 @@ func ReadWysb(filename string) {
 		var_i32_value := ci.Target(var_i32, "= ", ">")
 		gc.Set(var_i32_name, var_i32_value)
 		vm.Set(var_i32_name, var_i32_value)
-		fmt.Println("A chave ", var_i32_name, " com o valor ", var_i32_value, " foi registrada.")
 		replacer := "$[int32] " + var_i32_name + " = " + var_i32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -396,7 +397,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[float32] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -410,7 +410,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[float64] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -424,7 +423,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[static] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -438,7 +436,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[float128] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -452,7 +449,6 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[int64] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -466,7 +462,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[int128] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
@@ -480,7 +475,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[string] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
@@ -494,7 +488,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[bool] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
@@ -508,7 +501,6 @@ func ReadWysb(filename string) {
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
 		vm.Set(var_f32_name, var_f32_value)
-		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[array] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
@@ -537,7 +529,7 @@ func ReadWysb(filename string) {
 
 		findVarStr, ok := findVar.(string)
 		if !ok {
-			panic("findVar não é uma string")
+			panic("findVar is not a string")
 		}
 
 		replacer := "${" + var_f32 + "}"
@@ -556,28 +548,27 @@ func ReadWysb(filename string) {
 		var_fun_args := ci.Target(var_fun_untyped_bool, "(", ")")
 		var_fun_argsTYPED := ci.Target(var_fun, "(", ")")
 		var_fun_value := ci.Target(string(content), "{", "}")
-	
+
 		jsCode := fmt.Sprintf(`
 			function %s(%s) {
 				%s
 			}
 		`, var_fun_name, var_fun_args, var_fun_value)
-	
+
 		_, err := vm.Run(jsCode)
 		if err != nil {
 			panic(err)
 		}
 		gc.Set(var_fun_name, var_fun_value)
-		fmt.Println("A chave ", var_fun_name, " com o valor ", var_fun_value, " foi registrada.")
 		replacer := "!fun " + var_fun_name + "(" + var_fun_argsTYPED + ")" + "{" + `
 		` + var_fun_value + `
 	}
 		`
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
-	
+
 	keywords_callfn := []string{"@:"}
-	
+
 	counts_callfn := countKeywords(string(content), keywords_callfn)
 	for i := 1; i == counts_callfn; i++ {
 		var_Callfun := ci.Target(string(content), "@:", "?")
@@ -586,7 +577,7 @@ func ReadWysb(filename string) {
 		jsCode := fmt.Sprintf(`
 			%s(%s);
 		`, fnname, fnargs)
-	
+
 		result, err := vm.Run(jsCode)
 		if err != nil {
 			panic(err)
@@ -595,12 +586,11 @@ func ReadWysb(filename string) {
 			finalname := "exec::" + fnname
 			gc.Set(finalname, value)
 		} else {
-			fmt.Println("Erro ao obter o resultado da execução do JavaScript:", err)
+			fmt.Println("Error getting the result of JavaScript execution:", err)
 		}
 		replacer := "@::" + fnname + "(" + fnargs + ")?"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
-	
 
 	keywords_if := []string{"$if[>]"}
 
@@ -617,7 +607,7 @@ func ReadWysb(filename string) {
 
 		targetStr, ok := target.(string)
 		if !ok {
-			panic("target não é uma string")
+			panic("target is not a string")
 		}
 
 		compare, err := gc.Get(var_compare)
@@ -626,7 +616,7 @@ func ReadWysb(filename string) {
 		}
 		compareStr, ok := compare.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 
 		toExec, err := gc.Get(var_toExec)
@@ -635,10 +625,18 @@ func ReadWysb(filename string) {
 		}
 		toExecStr, ok := toExec.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 		if targetStr > compareStr {
-			execFunc(toExecStr)
+			runAddon, err := vm.Run(string(toExecStr))
+			if err != nil {
+				panic(err)
+			}
+			if value, err := runAddon.ToString(); err == nil {
+			gc.Set("exec::"+targetStr+""+compareStr+"", value)
+			} else {
+				fmt.Println("Error getting the result of JavaScript execution:", err)
+			}
 		}
 		replacer := "$if[>] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -660,7 +658,7 @@ func ReadWysb(filename string) {
 
 		targetStr, ok := target.(string)
 		if !ok {
-			panic("target não é uma string")
+			panic("target is not a string")
 		}
 
 		compare, err := gc.Get(var_compare)
@@ -669,7 +667,7 @@ func ReadWysb(filename string) {
 		}
 		compareStr, ok := compare.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 
 		toExec, err := gc.Get(var_toExec)
@@ -678,10 +676,18 @@ func ReadWysb(filename string) {
 		}
 		toExecStr, ok := toExec.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 		if targetStr < compareStr {
-			execFunc(toExecStr)
+			runAddon, err := vm.Run(string(toExecStr))
+			if err != nil {
+				panic(err)
+			}
+			if value, err := runAddon.ToString(); err == nil {
+			gc.Set("exec::"+targetStr+""+compareStr+"", value)
+			} else {
+				fmt.Println("Error getting the result of JavaScript execution:", err)
+			}
 		}
 		replacer := "$if[<] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -703,7 +709,7 @@ func ReadWysb(filename string) {
 
 		targetStr, ok := target.(string)
 		if !ok {
-			panic("target não é uma string")
+			panic("target is not a string")
 		}
 
 		compare, err := gc.Get(var_compare)
@@ -712,7 +718,7 @@ func ReadWysb(filename string) {
 		}
 		compareStr, ok := compare.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 
 		toExec, err := gc.Get(var_toExec)
@@ -721,10 +727,18 @@ func ReadWysb(filename string) {
 		}
 		toExecStr, ok := toExec.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 		if targetStr == compareStr {
-			execFunc(toExecStr)
+			runAddon, err := vm.Run(string(toExecStr))
+			if err != nil {
+				panic(err)
+			}
+			if value, err := runAddon.ToString(); err == nil {
+			gc.Set("exec::"+targetStr+""+compareStr+"", value)
+			} else {
+				fmt.Println("Error getting the result of JavaScript execution:", err)
+			}
 		}
 		replacer := "$if[==] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -746,7 +760,7 @@ func ReadWysb(filename string) {
 
 		targetStr, ok := target.(string)
 		if !ok {
-			panic("target não é uma string")
+			panic("target is not a string")
 		}
 
 		compare, err := gc.Get(var_compare)
@@ -755,7 +769,7 @@ func ReadWysb(filename string) {
 		}
 		compareStr, ok := compare.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 
 		toExec, err := gc.Get(var_toExec)
@@ -764,10 +778,18 @@ func ReadWysb(filename string) {
 		}
 		toExecStr, ok := toExec.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 		if targetStr <= compareStr {
-			execFunc(toExecStr)
+			runAddon, err := vm.Run(string(toExecStr))
+			if err != nil {
+				panic(err)
+			}
+			if value, err := runAddon.ToString(); err == nil {
+			gc.Set("exec::"+targetStr+""+compareStr+"", value)
+			} else {
+				fmt.Println("Error getting the result of JavaScript execution:", err)
+			}
 		}
 		replacer := "$if[<=] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -808,7 +830,7 @@ func ReadWysb(filename string) {
 
 		targetStr, ok := target.(string)
 		if !ok {
-			panic("target não é uma string")
+			panic("target is not a string")
 		}
 
 		compare, err := gc.Get(var_compare)
@@ -817,7 +839,7 @@ func ReadWysb(filename string) {
 		}
 		compareStr, ok := compare.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 
 		toExec, err := gc.Get(var_toExec)
@@ -826,12 +848,71 @@ func ReadWysb(filename string) {
 		}
 		toExecStr, ok := toExec.(string)
 		if !ok {
-			panic("compare não é uma string")
+			panic("compare is not a string")
 		}
 		if targetStr >= compareStr {
-			execFunc(toExecStr)
+			runAddon, err := vm.Run(string(toExecStr))
+			if err != nil {
+				panic(err)
+			}
+			if value, err := runAddon.ToString(); err == nil {
+			gc.Set("exec::"+targetStr+""+compareStr+"", value)
+			} else {
+				fmt.Println("Error getting the result of JavaScript execution:", err)
+			}
 		}
 		replacer := "$if[>=] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
+	keywords_notequal := []string{"$if[!=]"}
+
+	counts_notequal := countKeywords(string(content), keywords_notequal)
+	for i := 1; i == counts_notequal; i++ {
+		var_if := ci.Target(string(content), "$if[!=]", ";")
+		var_target := ci.Target(var_if, " ", " ::")
+		var_compare := ci.Target(var_if, ":: ", " !")
+		var_toExec := ci.Target(var_if, "! ", "(")
+		target, err := gc.Get(var_target)
+		if err != nil {
+			panic(err)
+		}
+
+		targetStr, ok := target.(string)
+		if !ok {
+			panic("target is not a string")
+		}
+
+		compare, err := gc.Get(var_compare)
+		if err != nil {
+			panic(err)
+		}
+		compareStr, ok := compare.(string)
+		if !ok {
+			panic("compare is not a string")
+		}
+
+		toExec, err := gc.Get(var_toExec)
+		if err != nil {
+			panic(err)
+		}
+		toExecStr, ok := toExec.(string)
+		if !ok {
+			panic("compare is not a string")
+		}
+		if targetStr != compareStr {
+			runAddon, err := vm.Run(string(toExecStr))
+			if err != nil {
+				panic(err)
+			}
+			if value, err := runAddon.ToString(); err == nil {
+			gc.Set("exec::"+targetStr+""+compareStr+"", value)
+			} else {
+				fmt.Println("Error getting the result of JavaScript execution:", err)
+			}
+		}
+		replacer := "$if[!=] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
 	}
@@ -1023,7 +1104,7 @@ func ReadWysb(filename string) {
 		}
 		tvStr, ok := targetvar_content.(string)
 		if !ok {
-			panic("findVar não é uma string")
+			panic("tvStr is not a string")
 		}
 		edited := strings.Replace(tvStr, targetselection, string(newselection), -1)
 		gc.Set(targetvar, edited)
@@ -1124,7 +1205,7 @@ func ReadWysb(filename string) {
 	for i := 1; i <= counts_addon; i++ {
 		addon := ci.Target(string(content), "<wysb.Addon", ">")
 		funcname := ci.Target(addon, " ", "!")
-			
+
 		replacer := "<os.BatchScript " + funcname + "!>"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
@@ -1135,11 +1216,12 @@ func ReadWysb(filename string) {
 	for i := 1; i == counts_println; i++ {
 		var_fun := ci.Target(string(content), "println(", ")")
 		logger.Info(context.Background(), var_fun)
-		fmt.Println("O valor ", var_fun, " foi registrado.")
 		replacer := "println(" + var_fun + ")"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
 	}
+
+
 
 }
 
@@ -1154,47 +1236,58 @@ func main() {
 	if checkInternetConnection() {
 		content, err := downloadFile(url)
 		if err != nil {
-			fmt.Println("Erro ao baixar o arquivo:", err)
+			fmt.Println("Error downloading the file:", err)
 			return
 		}
 
 		err = os.WriteFile(fileName, content, 0644)
 		if err != nil {
-			fmt.Println("Erro ao escrever o arquivo:", err)
+			fmt.Println("Error writing the file:", err)
 			return
 		}
 
-		fmt.Println("Arquivo baixado e salvo com sucesso.")
 	} else {
-		// Verificar se o arquivo existe localmente
+
 		_, err := os.Stat(fileName)
 		if os.IsNotExist(err) {
-			fmt.Println("Erro: O arquivo não existe localmente.")
+			fmt.Println("Error: File does not exist locally.")
 			return
 		}
 
-		// Ler e exibir o conteúdo do arquivo
 		addoncontent, err := os.ReadFile(fileName)
 		if err != nil {
-			fmt.Println("Erro ao ler o arquivo:", err)
+			fmt.Println("Error reading the file:", err)
 			return
 		}
 
-		fmt.Println("Conteúdo do arquivo local:")
 		runAddon, err := vm.Run(string(addoncontent))
-		fmt.Println(string(addoncontent))
 		if err != nil {
 			panic(err)
 		}
 		if value, err := runAddon.ToString(); err == nil {
 			gc.Set("addonResult", value)
 		} else {
-			fmt.Println("Erro ao obter o resultado da execução do JavaScript:", err)
+			fmt.Println("Error getting the result of JavaScript execution:", err)
 		}
-	
 
-		
 	}
+
+    if _, err := os.Stat("main.wys"); err == nil {
+
+        compiledcontent, err := os.ReadFile("main.wys")
+        if err != nil {
+            fmt.Println("Error reading the file:", err)
+            return
+        }
+        ReadWysb(string(compiledcontent))
+    } else if os.IsNotExist(err) {
+
+		fmt.Println("")
+    } else {
+
+        fmt.Println("Error verifying the existence of the file:", err)
+    }
+
 	var input string
 	fmt.Println(`
 
@@ -1205,7 +1298,6 @@ func main() {
 |__/|__/\__, /____/_____/ 
        /____/
 
-	
 Welcome to Wysb. To learn how to use the commands, you can use the "wysb help" command.`)
 	fmt.Scanln(&input)
 
@@ -1214,9 +1306,9 @@ Welcome to Wysb. To learn how to use the commands, you can use the "wysb help" c
 		fmt.Println(`
 		Complete list of commands:
 		- run: Used to run/test a Wysb file. After using it, you must pass the name of the file.
-		
+
 		- compile: To convert a Wysb file into an executable. After using it, you must pass the file name.
-		
+
 		- cardwmy: Used to initialize "cardwmy", the Wysb package manager. After using it, you must enter the URL of the package to be downloaded.
 		`)
 	} else if (finalinput == "run") {
@@ -1230,18 +1322,13 @@ Welcome to Wysb. To learn how to use the commands, you can use the "wysb help" c
 		fmt.Println("Enter the name of the Wysb file you want to compile: ")
 		var programname string
 		fmt.Scan(&programname)
-		fmt.Println("Enter the name of the Wysb file you want to compile: ")
-		var compilefile string
-		fmt.Scan(&compilefile)
 		fmt.Println("Now type in the name of the executable (including the file extension) of the Wysb compiler: ")
 		var compilerexec string
 		fmt.Scan(&compilerexec)
-		files := []string{compilefile, compilerexec}
+		files := []string{"main.wys", compilerexec}
 
-    // Nome do arquivo zip que será criado
     zipFilename := programname
 
-    // Cria um novo arquivo zip
     newZipFile, err := os.Create(zipFilename)
     if err != nil {
         fmt.Println(err)
@@ -1249,11 +1336,9 @@ Welcome to Wysb. To learn how to use the commands, you can use the "wysb help" c
     }
     defer newZipFile.Close()
 
-    // Cria um escritor para o arquivo zip
     zipWriter := zip.NewWriter(newZipFile)
     defer zipWriter.Close()
 
-    // Percorre os arquivos e adiciona-os ao arquivo zip
     for _, file := range files {
         if err := addFileToZip(zipWriter, file); err != nil {
             fmt.Println(err)
@@ -1277,7 +1362,7 @@ Welcome to Wysb. To learn how to use the commands, you can use the "wysb help" c
 		}
 		err = os.WriteFile(username, dlfile, 0644)
 		if err != nil {
-			fmt.Println("Erro ao escrever o arquivo:", err)
+			fmt.Println("Error writing the file:", err)
 			return
 		}
 	} else {
