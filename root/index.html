@@ -1,34 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wysb: Programming Language</title>
-    <link rel="stylesheet" href="foundation.min.css">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>Wysb: Programming Language</title>
+<link rel='stylesheet' href='normalize.min.css'>
+<link rel='stylesheet' href='typicons.min.css'><link rel="stylesheet" href="./style.css">
+
 </head>
 <body>
-    <div class="nav">
-    <ul class="menu align-center">
-        <li><a href="https://github.com/simplyYan/Wysb?tab=readme-ov-file#how-to-install">Download</a></li>
-        <li><a href="https://github.com/simplyYan/Wysb/wiki/Docs">Docs</a></li>
-        <li><a href="https://github.com/simplyYan/Wysb/">Github Repository</a></li>
-    </ul>
-</div>
-<div class="hero">
-    <div class="herocontent">
-    <h3><b>Compiled multi-paradigm programming language designed to be fast, easy, lightweight, secure and broad.</b></h3>
-    <button class="button" onclick="ezhref('github.com/simplyYan/Wysb/')">Get started now</button> <button class="button" onclick='ezhref("github.com/simplyYan/Wysb/wiki/Docs")'>Manual</button>
-</div>
-</div>
-<div class="features">
-    
-</div>
+<!-- partial:index.partial.html -->
+<!-- Header Section
+–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<header id="header">
+  <div class="main_nav">
+    <div class="container">
+      <div class="mobile-toggle"> <span></span> <span></span> <span></span> </div>
+      <nav>
+        <ul>
+          <li><a class="smoothscroll" href="https://github.com/simplyYan/Wysb?tab=readme-ov-file#-how-to-install">Download</a></li>
+          <li><a class="smoothscroll" href="https://github.com/simplyYan/Wysb/wiki/Docs">Docs</a></li>
+          <li><a class="smoothscroll" href="https://github.com/simplyYan/Wysb">Github Repo</a></li>
+          <li><a class="smoothscroll" href="https://github.com/simplyYan/Wysb/blob/main/DONATE.MD">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="title">
+    <p style="text-align: center;"><img src="yanh.png" width="150" alt="Wysb"></p>
+    <div class="smallsep heading"></div>
+    <h1 class="heading" style="font-weight: bold;"> Wysb</h1>
+    <h2 class="heading">Compiled multi-paradigm programming language designed to be fast, easy, lightweight, secure and broad.</h2>
+    <a class="smoothscroll" href="#about">
+    <div class="mouse">
+      <div class="wheel"></div>
+    </div>
+    </a> </div>
+  <a class="smoothscroll" href="#about">
+  <div class="scroll-down"></div>
+  </a> </header>
+  
+<!-- About Section
+–––––––––––––––––––––––––––––––––––––––––––––––––– -->  
+  
+<section id="about">
+  <div class="container">
+    <div class="row">
+      <h1>About</h1>
+      <div class="block"></div>
+      <p>Wysb is a general-purpose high-level programming language developed by Wesley Yan Soares Brehmer (who lives up to the name of the language, which is short for the author's name) to be an easy, fast, reliable, secure, broad and lightweight solution. Despite being high-level, Wysb has insane performance, reaching the same level as low-level languages.</p>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <h3>Typing</h3>
+        <p>Wysb has a nice strong and static typing, which allows for even more solid performance, along with other optimizations that make it a language with insane performance, achieving a level close to low-level languages.</p>
+      </div>
+      <div class="six columns">
+        <h3>Light, fast, secure</h3>
+        <p>Wysb is designed to be quick, easy, light and safe. It offers native features for encryption and the creation of immutable variables. In addition, the language is extremely optimized and receives constant updates to improve performance and security. Our language can be as fast as low-level languages, if used in the right way and with good practices.</p>
+      </div>
+      <div class="row">
+        <div class="six columns">
+          <h3>Ecosystem</h3>
+          <p>Wysb has its own package manager, called "Cardwmy". With the package manager, you can use libraries created by the community, people just like you! Cardwmy allows you to download packages hosted on Github, and automatically configures them for you to use in your programs.</p>
+        </div>
+        <div class="six columns">
+          <h3>Easy</h3>
+          <p>Wysb is extremely easy to read and learn. You can learn the basics of the language in a short time, and expand your knowledge by learning various libraries.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills Section
+–––––––––––––––––––––––––––––––––––––––––––––––––– -->  
+
+<section id="skills">
+  <div class="container">
+    <h1>Outstanding features</h1>
+    <div class="block"></div>
+    <div class="row">
+      <div class="one-third column">
+        <h3>Compiler</h3>
+        <p>The Wysb compiler is innovative! It doesn't use a lexer or parser, it recognizes your code, searching for language patterns and loading the values, storing everything in a reusable temporary cache. The compiler is extremely light and fast, built with the Go language.</p>
+      </div>
+      <div class="one-third column">
+        <h3>Memory allocation</h3>
+        <p>In Wysb, memory allocation is not mandatory. You can choose in which situations you use it, although there are situations where it may be the best choice. Memory allocation allows for better performance and avoids errors.</p>
+      </div>
+      <div class="one-third column">
+        <h3>Cross platform</h3>
+        <p>Currently, Wysb is compatible with Windows, Linux and macOS, and in the future, it will be compatible with Android.</p>
+      </div>
+    </div>
+    <h3>Areas that use Wysb the most</h3>
+    <div class="row">
+      <div class="eight columns">
+        <div class="progressBar">
+          <h4>Back-end/web development (in general)</h4>
+          <div class="progressBarContainer">
+            <div class="progressBarValue value-90"></div>
+          </div>
+        </div>
+        <div class="progressBar">
+          <h4>Machine learning/Deep learning</h4>
+          <div class="progressBarContainer">
+            <div class="progressBarValue value-80"></div>
+          </div>
+        </div>
+        <div class="progressBar">
+          <h4>Development of desktop programs (Without and with GUI)</h4>
+          <div class="progressBarContainer">
+            <div class="progressBarValue value-30"></div>
+          </div>
+        </div>
+        <div class="progressBar">
+          <h4>Data science</h4>
+          <div class="progressBarContainer">
+            <div class="progressBarValue value-70"></div>
+          </div>
+        </div>
+      </div>
+      <div class="four columns">
+        <p>In addition to these areas, several other areas consume Wysb, as well as several large companies around the world. Everything that requires good performance, security, reliability and flexibility can be done with Wysb, that is, everything you can think of.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="portfolio">
+  <div class="container">
+    <h1>Who is using Wysb?</h1>
+    <div class="block"></div>
+    <div class="row">
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+    </div>
+    <div class="row" style="margin-top: 30px;">
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+      <div class="three columns"> <img src="" class="image" alt="Who is using Wysb?"/></div>
+    </div>
+  </div>
+</section>
 
 
+<footer>
+  <div class="container">
+    <div class="nine columns">
+      <p>Developed by @simplyYan, under CC0-1.0 license.</p>
+    </div>
+  </div>
+</footer>
+<!-- partial -->
+  <script src='jquery.min.js'></script>
+<script src='TweenMax.min.js'></script><script  src="./script.js"></script>
 
-
-
-<script src="script.js"></script>
 </body>
 </html>
