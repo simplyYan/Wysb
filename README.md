@@ -24,8 +24,8 @@ You can install Wysb with Wysbup, a unique tool for installing and updating Wysb
 4. Wait for the installation;
 5. Done. You can now close Wysbup and enjoy all of Wysb's features (including Cardwmy).
 ### Download Mirrors
-- Mediafire: https://www.mediafire.com/folder/j9o1w5v1vpwcz/Wysb
 - Google Drive: https://drive.google.com/drive/folders/1DOgBcc14FPx7t4Viz1e54GxGSzdj2-5b?usp=sharing
+- Mediafire (NOT RECOMMENDED, FILES MAY BE MISSING): https://www.mediafire.com/folder/j9o1w5v1vpwcz/Wysb
 - Uptodown: ???
 
 ## 📜 Documentation
