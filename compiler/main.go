@@ -1,24 +1,30 @@
 package main
 
 import (
+	"archive/zip"
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/robertkrimen/otto"
+
 	"math"
-	"strconv"
 	"os/exec"
 	"runtime"
+	"strconv"
+
 	"github.com/bluele/gcache"
 	lagra "github.com/simplyYan/LAGRA"
 	w7 "github.com/simplyYan/W7DTH"
 	"github.com/simplyYan/cutinfo"
-
 )
 
 var gc = gcache.New(20).
@@ -29,6 +35,8 @@ var logger, err = lagra.New(`
 	log_file = "output.log"
 	`)
 
+var vm = otto.New()
+
 func countKeywords(text string, keywords []string) int {
 	total := 0
 
@@ -38,6 +46,31 @@ func countKeywords(text string, keywords []string) int {
 
 	return total
 }
+
+func downloadFile(url string) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func checkInternetConnection() bool {
+	_, err := http.Get("http://clients3.google.com/generate_204")
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+
 
 func execShellScript(script string) error {
 	var comando string
@@ -75,6 +108,39 @@ func execBatchScript(script string) error {
 	return cmd.Run()
 }
 
+func addFileToZip(zipWriter *zip.Writer, filename string) error {
+    fileToZip, err := os.Open(filename)
+    if err != nil {
+        return err
+    }
+    defer fileToZip.Close()
+
+    // Obtém informações sobre o arquivo
+    fileInfo, err := fileToZip.Stat()
+    if err != nil {
+        return err
+    }
+
+    // Cria um cabeçalho zip para o arquivo
+    header, err := zip.FileInfoHeader(fileInfo)
+    if err != nil {
+        return err
+    }
+
+    // Define o nome do arquivo no arquivo zip
+    header.Name = filepath.Base(filename)
+
+    // Adiciona o cabeçalho ao arquivo zip
+    writer, err := zipWriter.CreateHeader(header)
+    if err != nil {
+        return err
+    }
+
+    // Copia o conteúdo do arquivo para o arquivo zip
+    _, err = io.Copy(writer, fileToZip)
+    return err
+}
+
 func randomString(length int) string {
 	rand.Seed(time.Now().UnixNano())
 
@@ -110,6 +176,18 @@ func ReadWysb(filename string) {
 
 	ci := cutinfo.New()
 
+	keywords_convertStr := []string{"<to.string"}
+
+	counts_convertStr := countKeywords(string(content), keywords_convertStr)
+	for i := 1; i <= counts_convertStr; i++ {
+		convert := ci.Target(string(content), "<to.string ", "!>")
+
+		replacer := "<to.string " + convert + "!>"
+		toString := "'"+convert+"'"
+		content = []byte(strings.Replace(string(content), replacer, toString, i))
+
+	}
+
 	keywords_sum := []string{"<math.sum"}
 
 	counts_sum := countKeywords(string(content), keywords_sum)
@@ -134,6 +212,8 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, rsult_str, i))
 
 	}
+
+
 
 	keywords_sub := []string{"<math.sub"}
 
@@ -303,6 +383,7 @@ func ReadWysb(filename string) {
 		var_i32_name := ci.Target(var_i32, " ", " =")
 		var_i32_value := ci.Target(var_i32, "= ", ">")
 		gc.Set(var_i32_name, var_i32_value)
+		vm.Set(var_i32_name, var_i32_value)
 		fmt.Println("A chave ", var_i32_name, " com o valor ", var_i32_value, " foi registrada.")
 		replacer := "$[int32] " + var_i32_name + " = " + var_i32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -314,6 +395,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[float32] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -327,6 +409,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[float64] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -340,6 +423,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[static] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -353,6 +437,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[float128] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -380,6 +465,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[int128] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -393,6 +479,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[string] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -406,6 +493,7 @@ func ReadWysb(filename string) {
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[bool] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -415,10 +503,11 @@ func ReadWysb(filename string) {
 
 	counts_array := countKeywords(string(content), keywords_array)
 	for i := 1; i <= counts_array; i++ {
-		var_f32 := ci.Target(string(content), "$[bool]", ";")
+		var_f32 := ci.Target(string(content), "$[array]", ";")
 		var_f32_name := ci.Target(var_f32, " ", " =")
 		var_f32_value := ci.Target(var_f32, "= ", ">")
 		gc.Set(var_f32_name, var_f32_value)
+		vm.Set(var_f32_name, var_f32_value)
 		fmt.Println("A chave ", var_f32_name, " com o valor ", var_f32_value, " foi registrada.")
 		replacer := "$[array] " + var_f32_name + " = " + var_f32_value
 		content = []byte(strings.Replace(string(content), replacer, "", i))
@@ -454,51 +543,64 @@ func ReadWysb(filename string) {
 		replacer := "${" + var_f32 + "}"
 		content = []byte(strings.Replace(string(content), replacer, findVarStr, i))
 	}
-
 	keywords_fun := []string{"!fun"}
 
 	counts_fun := countKeywords(string(content), keywords_fun)
 	for i := 1; i == counts_fun; i++ {
 		var_fun := ci.Target(string(content), "!fun", "{")
-		var_fun_name := ci.Target(var_fun, " ", "(")
+		var_fun_untyped_str := strings.Replace(var_fun, "[string]", "", -1)
+		var_fun_untyped_int := strings.Replace(var_fun_untyped_str, "[int]", "", -1)
+		var_fun_untyped_float := strings.Replace(var_fun_untyped_int, "[float]", "", -1)
+		var_fun_untyped_bool := strings.Replace(var_fun_untyped_float, "[bool]", "", -1)
+		var_fun_name := ci.Target(var_fun_untyped_bool, " ", "(")
+		var_fun_args := ci.Target(var_fun_untyped_bool, "(", ")")
+		var_fun_argsTYPED := ci.Target(var_fun, "(", ")")
 		var_fun_value := ci.Target(string(content), "{", "}")
-		gc.Set(var_fun_name, var_fun_value)
-		fmt.Println("A chave ", var_fun_name, " com o valor ", var_fun_value, " foi registrada.")
-		replacer := "!fun " + var_fun_name + " = " + var_fun_value
-		content = []byte(strings.Replace(string(content), replacer, "", i))
-
-	}
-	keywords_println := []string{"println("}
-
-	counts_println := countKeywords(string(content), keywords_println)
-	for i := 1; i == counts_println; i++ {
-		var_fun := ci.Target(string(content), "println(", ")")
-		logger.Info(context.Background(), var_fun)
-		fmt.Println("O valor ", var_fun, " foi registrado.")
-		replacer := "println(" + var_fun + ")"
-		content = []byte(strings.Replace(string(content), replacer, "", i))
-
-	}
-
-	keywords_callfn := []string{"@:"}
-
-	counts_callfn := countKeywords(string(content), keywords_callfn)
-	for i := 1; i == counts_callfn; i++ {
-		var_Callfun := ci.Target(string(content), "@:", "(")
-		callFunc, err := gc.Get(var_Callfun)
+	
+		jsCode := fmt.Sprintf(`
+			function %s(%s) {
+				%s
+			}
+		`, var_fun_name, var_fun_args, var_fun_value)
+	
+		_, err := vm.Run(jsCode)
 		if err != nil {
 			panic(err)
 		}
-		findVarStr, ok := callFunc.(string)
-		if !ok {
-			panic("findVar não é uma string")
-		}
-		execFunc(findVarStr)
-
-		replacer := "@:" + var_Callfun + "("
-		content = []byte(strings.Replace(string(content), replacer, "", i))
-
+		gc.Set(var_fun_name, var_fun_value)
+		fmt.Println("A chave ", var_fun_name, " com o valor ", var_fun_value, " foi registrada.")
+		replacer := "!fun " + var_fun_name + "(" + var_fun_argsTYPED + ")" + "{" + `
+		` + var_fun_value + `
 	}
+		`
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+	}
+	
+	keywords_callfn := []string{"@:"}
+	
+	counts_callfn := countKeywords(string(content), keywords_callfn)
+	for i := 1; i == counts_callfn; i++ {
+		var_Callfun := ci.Target(string(content), "@:", "?")
+		fnname := ci.Target(var_Callfun, ":", "(")
+		fnargs := ci.Target(var_Callfun, "(", ")")
+		jsCode := fmt.Sprintf(`
+			%s(%s);
+		`, fnname, fnargs)
+	
+		result, err := vm.Run(jsCode)
+		if err != nil {
+			panic(err)
+		}
+		if value, err := result.ToString(); err == nil {
+			finalname := "exec::" + fnname
+			gc.Set(finalname, value)
+		} else {
+			fmt.Println("Erro ao obter o resultado da execução do JavaScript:", err)
+		}
+		replacer := "@::" + fnname + "(" + fnargs + ")?"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+	}
+	
 
 	keywords_if := []string{"$if[>]"}
 
@@ -670,6 +772,25 @@ func ReadWysb(filename string) {
 		replacer := "$if[<=] " + targetStr + " :: " + compareStr + " ! " + toExecStr + "();"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
+	}
+
+	keywords_getvar2 := []string{"&{"}
+
+	counts_getvar2 := countKeywords(string(content), keywords_getvar2)
+	for i := 1; i <= counts_getvar2; i++ {
+		var_f32 := ci.Target(string(content), "&{", "}")
+		findVar, err := gc.Get(var_f32)
+		if err != nil {
+			panic(err)
+		}
+
+		findVarStr, ok := findVar.(string)
+		if !ok {
+			panic("findVar não é uma string")
+		}
+
+		replacer := "&{" + var_f32 + "}"
+		content = []byte(strings.Replace(string(content), replacer, findVarStr, i))
 	}
 
 	keywords_ifBiggerEqual := []string{"$if[>=]"}
@@ -997,6 +1118,29 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
 
+	keywords_addon := []string{"<wysb.Addon"}
+
+	counts_addon := countKeywords(string(content), keywords_addon)
+	for i := 1; i <= counts_addon; i++ {
+		addon := ci.Target(string(content), "<wysb.Addon", ">")
+		funcname := ci.Target(addon, " ", "!")
+			
+		replacer := "<os.BatchScript " + funcname + "!>"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+	}
+
+	keywords_println := []string{"println("}
+
+	counts_println := countKeywords(string(content), keywords_println)
+	for i := 1; i == counts_println; i++ {
+		var_fun := ci.Target(string(content), "println(", ")")
+		logger.Info(context.Background(), var_fun)
+		fmt.Println("O valor ", var_fun, " foi registrado.")
+		replacer := "println(" + var_fun + ")"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
 }
 
 func execFunc(data string) {
@@ -1004,7 +1148,139 @@ func execFunc(data string) {
 }
 
 func main() {
+	url := "https://raw.githubusercontent.com/simplyYan/Blackpard/main/add-ons/wysb-addon.js"
+	fileName := "wysb-addon.js"
 
-	ReadWysb("test.wys")
+	if checkInternetConnection() {
+		content, err := downloadFile(url)
+		if err != nil {
+			fmt.Println("Erro ao baixar o arquivo:", err)
+			return
+		}
 
+		err = os.WriteFile(fileName, content, 0644)
+		if err != nil {
+			fmt.Println("Erro ao escrever o arquivo:", err)
+			return
+		}
+
+		fmt.Println("Arquivo baixado e salvo com sucesso.")
+	} else {
+		// Verificar se o arquivo existe localmente
+		_, err := os.Stat(fileName)
+		if os.IsNotExist(err) {
+			fmt.Println("Erro: O arquivo não existe localmente.")
+			return
+		}
+
+		// Ler e exibir o conteúdo do arquivo
+		addoncontent, err := os.ReadFile(fileName)
+		if err != nil {
+			fmt.Println("Erro ao ler o arquivo:", err)
+			return
+		}
+
+		fmt.Println("Conteúdo do arquivo local:")
+		runAddon, err := vm.Run(string(addoncontent))
+		fmt.Println(string(addoncontent))
+		if err != nil {
+			panic(err)
+		}
+		if value, err := runAddon.ToString(); err == nil {
+			gc.Set("addonResult", value)
+		} else {
+			fmt.Println("Erro ao obter o resultado da execução do JavaScript:", err)
+		}
+	
+
+		
+	}
+	var input string
+	fmt.Println(`
+
+ _       __           __  
+| |     / /_  _______/ /_ 
+| | /| / / / / / ___/ __ \
+| |/ |/ / /_/ (__  ) /_/ /
+|__/|__/\__, /____/_____/ 
+       /____/
+
+	
+Welcome to Wysb. To learn how to use the commands, you can use the "wysb help" command.`)
+	fmt.Scanln(&input)
+
+	finalinput := strings.Replace(input, "wysb ", "", 1)
+	if (finalinput == "help") {
+		fmt.Println(`
+		Complete list of commands:
+		- run: Used to run/test a Wysb file. After using it, you must pass the name of the file.
+		
+		- compile: To convert a Wysb file into an executable. After using it, you must pass the file name.
+		
+		- cardwmy: Used to initialize "cardwmy", the Wysb package manager. After using it, you must enter the URL of the package to be downloaded.
+		`)
+	} else if (finalinput == "run") {
+		fmt.Println("Enter the name of the Wysb file you want to run: ")
+		var runinput string
+		fmt.Scanln(&runinput)
+		fmt.Println("Running the "+runinput+" file")
+		ReadWysb(runinput)
+
+	} else if (finalinput == "compile") {
+		fmt.Println("Enter the name of the Wysb file you want to compile: ")
+		var programname string
+		fmt.Scan(&programname)
+		fmt.Println("Enter the name of the Wysb file you want to compile: ")
+		var compilefile string
+		fmt.Scan(&compilefile)
+		fmt.Println("Now type in the name of the executable (including the file extension) of the Wysb compiler: ")
+		var compilerexec string
+		fmt.Scan(&compilerexec)
+		files := []string{compilefile, compilerexec}
+
+    // Nome do arquivo zip que será criado
+    zipFilename := programname
+
+    // Cria um novo arquivo zip
+    newZipFile, err := os.Create(zipFilename)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer newZipFile.Close()
+
+    // Cria um escritor para o arquivo zip
+    zipWriter := zip.NewWriter(newZipFile)
+    defer zipWriter.Close()
+
+    // Percorre os arquivos e adiciona-os ao arquivo zip
+    for _, file := range files {
+        if err := addFileToZip(zipWriter, file); err != nil {
+            fmt.Println(err)
+            return
+        }
+    }
+
+    fmt.Println("Arquivo zip criado com sucesso:", zipFilename)
+
+	} else if (finalinput == "cardwmy") {
+		fmt.Println("Enter the ID of the Cardwmy package you want to download (example: '!PackageAuthor/PackageName!'): ")
+		var carinput string 
+		fmt.Scanln(&carinput)
+		ci := cutinfo.New()
+		username := ci.Target(carinput, "!", "/")
+		pkg := ci.Target(carinput, "/", "!")
+		result := "https://raw.githubusercontent.com/"+username+"/"+pkg+"/main/main.wys"
+		dlfile, err := downloadFile(result)
+		if err != nil {
+			panic(err)
+		}
+		err = os.WriteFile(username, dlfile, 0644)
+		if err != nil {
+			fmt.Println("Erro ao escrever o arquivo:", err)
+			return
+		}
+	} else {
+		panic("unknown command: "+finalinput+"")
+	}
 }
