@@ -13,6 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"github.com/gofiber/fiber/v2"
+	"github.com/simplyYan/GalaktaGlare"
 
 	"github.com/robertkrimen/otto"
 
@@ -36,6 +38,9 @@ var logger, err = lagra.New(`
 	`)
 
 var vm = otto.New()
+
+var glare = galaktaglare.New()
+var web = fiber.New()
 
 func countKeywords(text string, keywords []string) int {
 	total := 0
@@ -169,6 +174,15 @@ func ReadWysb(filename string) {
 
 	ci := cutinfo.New()
 
+	keywords_comments := []string{"!:!"}
+
+	counts_comments := countKeywords(string(content), keywords_comments)
+	for i := 1; i == counts_comments; i++ {
+		ccontent := ci.Target(string(content), "!:!", "!:!")
+		replacer := "!:!" + ccontent + "!:!"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
 	keywords_extends := []string{"<extends"}
 
 	counts_extends := countKeywords(string(content), keywords_extends)
@@ -379,6 +393,54 @@ func ReadWysb(filename string) {
 		content = []byte(strings.Replace(string(content), replacer, string(thiscontent), i))
 
 	}
+
+	keywords_gglareimg := []string{"<gglare.imagescan"}
+
+	counts_gglareimg := countKeywords(string(content), keywords_gglareimg)
+	for i := 1; i == counts_gglareimg; i++ {
+		webstatic := ci.Target(string(content), "<gglare.imagescan ", ">")
+		db := ci.Target(webstatic, " ", " ::")
+		imgtoscan := ci.Target(webstatic, ":: ", "!")
+		err := glare.ImageDB(db)
+		if err != nil {
+			fmt.Println("Error loading the image database:", err)
+			return
+		}
+		similarity, err := glare.ImageScan(imgtoscan)
+		if err != nil {
+			fmt.Println("Error when comparing images:", err)
+			return
+		}
+		replacer := "<gglare.imagescan " + db + " :: " + imgtoscan + "!>"
+
+		// Converte o float para uma string
+		s := strconv.FormatFloat(similarity, 'f', -1, 64)
+		content = []byte(strings.Replace(string(content), replacer, string(s), i))
+
+	}	
+
+	keywords_gglaretext := []string{"<gglare.textclassifier"}
+
+	counts_gglaretext := countKeywords(string(content), keywords_gglaretext)
+	for i := 1; i == counts_gglaretext; i++ {
+		textclassifier := ci.Target(string(content), "<gglare.textclassifier ", ">")
+		text := ci.Target(textclassifier, " ", " ::")
+		toml := ci.Target(textclassifier, ":: ", "!")
+
+		result, err := glare.TextClassifier(text, toml)
+		if err != nil {
+			panic(err)
+		}
+
+
+		replacer := "<gglare.textclassifier " + text + " :: " + toml + "!>"
+
+
+		content = []byte(strings.Replace(string(content), replacer, result, i))
+
+	}	
+
+
 
 	for i := 1; i <= counts; i++ {
 		var_i32 := ci.Target(string(content), "$[int32]", ";")
@@ -1206,7 +1268,7 @@ func ReadWysb(filename string) {
 		addon := ci.Target(string(content), "<wysb.Addon", ">")
 		funcname := ci.Target(addon, " ", "!")
 
-		replacer := "<os.BatchScript " + funcname + "!>"
+		replacer := "<wysb.Addon " + funcname + "!>"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 	}
 
@@ -1217,6 +1279,64 @@ func ReadWysb(filename string) {
 		var_fun := ci.Target(string(content), "println(", ")")
 		logger.Info(context.Background(), var_fun)
 		replacer := "println(" + var_fun + ")"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
+	keywords_webget := []string{"<web.get"}
+
+	counts_webget := countKeywords(string(content), keywords_webget)
+	for i := 1; i == counts_webget; i++ {
+		webget := ci.Target(string(content), "<web.get", ">")
+		route := ci.Target(webget, " ", " ::")
+		returnn := ci.Target(webget, ":: ", "!")
+		web.Get(route, func(c *fiber.Ctx) error {
+			c.Type("html")
+			return c.SendString(returnn)
+			
+		})
+		replacer := "<web.get " + route + " :: " + returnn + "!>"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
+	keywords_weblisten := []string{"<web.listen"}
+
+	counts_weblisten := countKeywords(string(content), keywords_weblisten)
+	for i := 1; i == counts_weblisten; i++ {
+		weblisten := ci.Target(string(content), "<web.listen ", "!>")
+		web.Listen(weblisten)
+		replacer := "<web.listen " + weblisten + "!>"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
+	keywords_webstatic := []string{"<web.static"}
+
+	counts_webstatic := countKeywords(string(content), keywords_webstatic)
+	for i := 1; i == counts_webstatic; i++ {
+		webstatic := ci.Target(string(content), "<web.static ", ">")
+		route := ci.Target(webstatic, " ", " ::")
+		dir := ci.Target(webstatic, ":: ", "!")
+		web.Static(route, dir)
+		replacer := "<web.static " + route + " :: " + dir + "!>"
+		content = []byte(strings.Replace(string(content), replacer, "", i))
+
+	}
+
+	keywords_webpost := []string{"<web.post"}
+
+	counts_webpost := countKeywords(string(content), keywords_webpost)
+	for i := 1; i == counts_webpost; i++ {
+		webpost := ci.Target(string(content), "<web.post", ">")
+		route := ci.Target(webpost, " ", " ::")
+		returnn := ci.Target(webpost, ":: ", "!")
+		web.Post(route, func(c *fiber.Ctx) error {
+			c.Type("html")
+			return c.SendString(returnn)
+			
+		})
+		replacer := "<web.post " + route + " :: " + returnn + "!>"
 		content = []byte(strings.Replace(string(content), replacer, "", i))
 
 	}
