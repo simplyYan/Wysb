@@ -1350,7 +1350,7 @@ func execFunc(data string) {
 }
 
 func main() {
-	url := "https://raw.githubusercontent.com/simplyYan/Blackpard/main/add-ons/wysb-addon.js"
+	url := "https://raw.githubusercontent.com/simplyYan/Wysb/main/add-ons/wysb-addon.js"
 	fileName := "wysb-addon.js"
 
 	if checkInternetConnection() {
