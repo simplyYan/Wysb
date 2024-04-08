@@ -1380,15 +1380,11 @@ func main() {
 			return
 		}
 
-		runAddon, err := vm.Run(string(addoncontent))
+		_, err = vm.Run(string(addoncontent))
 		if err != nil {
 			panic(err)
 		}
-		if value, err := runAddon.ToString(); err == nil {
-			gc.Set("addonResult", value)
-		} else {
-			fmt.Println("Error getting the result of JavaScript execution:", err)
-		}
+		
 
 	}
 
