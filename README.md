@@ -26,7 +26,7 @@ You can install Wysb with Wysbup, a unique tool for installing and updating Wysb
 ### Download Mirrors
 - Google Drive: https://drive.google.com/drive/folders/1DOgBcc14FPx7t4Viz1e54GxGSzdj2-5b?usp=sharing
 - Mediafire (NOT RECOMMENDED, FILES MAY BE MISSING): https://www.mediafire.com/folder/j9o1w5v1vpwcz/Wysb
-- Uptodown: ???
+- Uptodown (Windows): https://wysbup.en.uptodown.com/windows
 
 ## 📜 Documentation
 Wysb has extensive documentation with real-life examples and easy-to-understand explanations. To read the Wysb documentation, you can access the repository's Wiki.
