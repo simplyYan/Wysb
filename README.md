@@ -40,4 +40,8 @@ You can help Wysb grow. If you like our language, you can contribute in various 
 2. Open pull-request: You can "get your hands dirty" and contribute directly to Wysb, adding, correcting or improving features;
 3. Developing and distributing packages: You help the community and the language a lot by distributing relevant packages/libraries. This can be done through Cardwmy;
 
+<a href='https://wysbup.en.uptodown.com/windows' title='Download Wysbup' >
+<img src='https://stc.utdstc.com/img/mediakit/certified-free.png' alt='Download Wysbup'>
+</a>
+
 > A project founded by Wesley Yan Soares Brehmer, from Brazil ❤️
