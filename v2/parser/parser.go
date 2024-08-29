@@ -2,7 +2,7 @@ package parser
 
 import (
 	"fmt"
-	"../lexer"
+	"github.com/simplyYan/Wysb/lexer"
 )
 
 type NodeType string
