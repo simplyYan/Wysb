@@ -2,7 +2,7 @@ package typechecker
 
 import (
 	"fmt"
-	"../parser"
+	"github.com/simplyYan/Wysb//parser"
 )
 
 type Tipo string
