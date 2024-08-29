@@ -2,7 +2,7 @@ package codegen
 
 import (
 	"fmt"
-	"../parser"
+	"github.com/simplyYan/Wysb/parser"
 )
 
 type Instrucao struct {
