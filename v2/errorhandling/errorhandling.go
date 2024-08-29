@@ -1,4 +1,4 @@
-package errorhandling
+package github.com/simplyYan/Wysb/errorhandling
 
 import (
 	"fmt"
