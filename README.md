@@ -39,7 +39,7 @@ You can help Wysb grow. If you like our language, you can contribute in various 
 1. Open issues: You can open issues to submit suggestions or bug reports;
 2. Open pull-request: You can "get your hands dirty" and contribute directly to Wysb, adding, correcting or improving features;
 3. Developing and distributing packages: You help the community and the language a lot by distributing relevant packages/libraries. This can be done through Cardwmy;
-The language is growing a lot and gaining visibility in various areas. Even though it's new, the project has had a positive impact on the market.
+- The language is growing a lot and gaining visibility in various areas. Even though it's new, the project has had a positive impact on the market.
 -------------------
 <a href='https://wysbup.en.uptodown.com/windows' title='Download Wysbup' >
 <img src='https://stc.utdstc.com/img/mediakit/certified-free.png' alt='Download Wysbup'>
