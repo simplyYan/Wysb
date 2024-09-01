@@ -1,0 +1,8 @@
+github.com/simplyYan/Wysb/src/environment v0.0.0-20240901145127-2a71514d9cab h1:RF2ERpzR6CPLlMi5F4m0idWl6axX5LxyRkwtk98W3rM=
+github.com/simplyYan/Wysb/src/environment v0.0.0-20240901145127-2a71514d9cab/go.mod h1:B7eOq6DxQ5n0PDFI/tQQyvxALcVHQd6oMiTbFItxiuM=
+github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901145127-2a71514d9cab h1:YBQOK/FP2XPf5klds5zb5r8nPIflqFqmNPZPbDEbmm4=
+github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901145127-2a71514d9cab/go.mod h1:MOKioqkwItjCzqMzufhXy5pnqBuDuiaZV/eZHd7yYG0=
+github.com/simplyYan/Wysb/src/parser v0.0.0-20240901145127-2a71514d9cab h1:rvsql9W0lFc4xVbTFDVbeD+yBtj57hs4E7zZC3HkbNA=
+github.com/simplyYan/Wysb/src/parser v0.0.0-20240901145127-2a71514d9cab/go.mod h1:rnzjh9UrNJxoTVWCu3bJlIakiQpN/wwrtpbiAE1Wqn4=
+github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901145127-2a71514d9cab h1:cFQwwsq/oRvghl9PErQrOBgVI5+siZCyXvN9ES3FVwI=
+github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901145127-2a71514d9cab/go.mod h1:U9rAituQIBCCbO1EAW+V5ZbGSg4T7j9RcvHlZA6wRd8=
