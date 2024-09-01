@@ -1,4 +1,3 @@
-// src/parser.go
 package parser
 
 import (
@@ -20,16 +19,14 @@ const (
 	SLASH
 	LPAREN
 	RPAREN
-	// Adicione mais tokens conforme necessário
+
 )
 
-// Token representa um token com seu tipo e valor literal
 type Token struct {
 	Type    TokenType
 	Literal string
 }
 
-// Tokenize converte uma string de código fonte em uma lista de tokens
 func Tokenize(input string) []Token {
 	var tokens []Token
 	runes := []rune(input)
