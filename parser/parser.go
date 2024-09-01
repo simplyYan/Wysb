@@ -1,161 +1,188 @@
-// parser/parser.go
 package parser
 
 import (
-	"fmt"
-	"strconv"
-
-	"github.com/simplyYan/Wysb/src/tokenizer"
+	"strings"
+	"unicode"
 )
 
-type Node interface {
-	String() string
+type TokenType int
+
+const (
+	ILLEGAL TokenType = iota
+	EOF
+	IDENTIFIER
+	INT
+	ASSIGN
+	PLUS
+	MINUS
+	ASTERISK
+	SLASH
+	LPAREN
+	RPAREN
+	SEMICOLON
+
+)
+
+type Token struct {
+	Type    TokenType
+	Literal string
 }
 
-type LetStatement struct {
-	Name  string
-	Type  string
-	Value Expression
-}
+func Tokenize(input string) []Token {
+	var tokens []Token
+	runes := []rune(input)
 
-func (ls *LetStatement) String() string {
-	return fmt.Sprintf("let %s: %s = %s", ls.Name, ls.Type, ls.Value.String())
-}
+	for i := 0; i < len(runes); {
+		ch := runes[i]
 
-type IfStatement struct {
-	Condition Expression
-	Consequence []Node
-	Alternative []Node
-}
-
-func (is *IfStatement) String() string {
-	return fmt.Sprintf("if %s { ... } else { ... }", is.Condition.String())
-}
-
-type ForStatement struct {
-	Identifier string
-	Range      Expression
-	Body       []Node
-}
-
-func (fs *ForStatement) String() string {
-	return fmt.Sprintf("for %s in %s { ... }", fs.Identifier, fs.Range.String())
-}
-
-type Expression interface {
-	Node
-}
-
-type IntegerLiteral struct {
-	Value int
-}
-
-func (il *IntegerLiteral) String() string {
-	return fmt.Sprintf("%d", il.Value)
-}
-
-type Identifier struct {
-	Name string
-}
-
-func (id *Identifier) String() string {
-	return id.Name
-}
-
-type InfixExpression struct {
-	Left     Expression
-	Operator string
-	Right    Expression
-}
-
-func (ie *InfixExpression) String() string {
-	return fmt.Sprintf("(%s %s %s)", ie.Left.String(), ie.Operator, ie.Right.String())
-}
-
-func Parse(tokens []tokenizer.Token) []Node {
-	var statements []Node
-	i := 0
-
-	for i < len(tokens) {
-		switch tokens[i].Type {
-		case tokenizer.LET:
+		if unicode.IsSpace(ch) {
 			i++
-			if tokens[i].Type != tokenizer.IDENT {
-				panic("expected identifier after 'let'")
-			}
-			name := tokens[i].Literal
-			i++
-			if tokens[i].Type != tokenizer.COLON {
-				panic("expected ':' after identifier")
-			}
-			i++
-			if tokens[i].Type != tokenizer.IDENT {
-				panic("expected type after ':'")
-			}
-			varType := tokens[i].Literal
-			i++
-			if tokens[i].Type != tokenizer.ASSIGN {
-				panic("expected '=' after type")
-			}
-			i++
-			value := parseExpression(tokens, &i)
-			statements = append(statements, &LetStatement{Name: name, Type: varType, Value: value})
-
-		case tokenizer.IF:
-			i++
-			condition := parseExpression(tokens, &i)
-			i++ // Skip '{'
-			consequence := parseBlock(tokens, &i)
-			var alternative []Node
-			if tokens[i].Type == tokenizer.ELSE {
-				i++
-				i++ // Skip '{'
-				alternative = parseBlock(tokens, &i)
-			}
-			statements = append(statements, &IfStatement{Condition: condition, Consequence: consequence, Alternative: alternative})
-
-		case tokenizer.FOR:
-			i++
-			identifier := tokens[i].Literal
-			i++ // Skip 'in'
-			rangeExpr := parseExpression(tokens, &i)
-			i++ // Skip '{'
-			body := parseBlock(tokens, &i)
-			statements = append(statements, &ForStatement{Identifier: identifier, Range: rangeExpr, Body: body})
+			continue
 		}
+
+		switch ch {
+		case '=':
+			tokens = append(tokens, Token{Type: ASSIGN, Literal: string(ch)})
+		case '+':
+			tokens = append(tokens, Token{Type: PLUS, Literal: string(ch)})
+		case '-':
+			tokens = append(tokens, Token{Type: MINUS, Literal: string(ch)})
+		case '*':
+			tokens = append(tokens, Token{Type: ASTERISK, Literal: string(ch)})
+		case '/':
+			tokens = append(tokens, Token{Type: SLASH, Literal: string(ch)})
+		case '(':
+			tokens = append(tokens, Token{Type: LPAREN, Literal: string(ch)})
+		case ')':
+			tokens = append(tokens, Token{Type: RPAREN, Literal: string(ch)})
+		case ';':
+			tokens = append(tokens, Token{Type: SEMICOLON, Literal: string(ch)})
+		default:
+			if isLetter(ch) {
+				identifier := readIdentifier(runes, &i)
+				tokens = append(tokens, Token{Type: IDENTIFIER, Literal: identifier})
+				continue
+			} else if isDigit(ch) {
+				number := readNumber(runes, &i)
+				tokens = append(tokens, Token{Type: INT, Literal: number})
+				continue
+			} else {
+				tokens = append(tokens, Token{Type: ILLEGAL, Literal: string(ch)})
+			}
+		}
+
 		i++
 	}
 
+	tokens = append(tokens, Token{Type: EOF, Literal: ""})
+	return tokens
+}
+
+func isLetter(ch rune) bool {
+	return unicode.IsLetter(ch)
+}
+
+func isDigit(ch rune) bool {
+	return unicode.IsDigit(ch)
+}
+
+func readIdentifier(input []rune, start *int) string {
+	var sb strings.Builder
+	for *start < len(input) && isLetter(input[*start]) {
+		sb.WriteRune(input[*start])
+		*start++
+	}
+	return sb.String()
+}
+
+func readNumber(input []rune, start *int) string {
+	var sb strings.Builder
+	for *start < len(input) && isDigit(input[*start]) {
+		sb.WriteRune(input[*start])
+		*start++
+	}
+	return sb.String()
+}
+
+type NodeType int
+
+const (
+	VARIABLE NodeType = iota
+	NUMBER
+	EXPRESSION
+	ASSIGNMENT
+	STATEMENT
+)
+
+type Node struct {
+	Type  NodeType
+	Value string
+	Left  *Node
+	Right *Node
+}
+
+type Statement struct {
+	Node *Node
+}
+
+func Parse(tokens []Token) []Statement {
+	var statements []Statement
+	var current *Node
+	var stack []*Node
+	var node *Node
+
+	for i := 0; i < len(tokens); i++ {
+		token := tokens[i]
+
+		switch token.Type {
+		case IDENTIFIER:
+			node = &Node{Type: VARIABLE, Value: token.Literal}
+			if current != nil {
+				current.Left = node
+			}
+			stack = append(stack, node)
+			current = nil
+		case INT:
+			node = &Node{Type: NUMBER, Value: token.Literal}
+			if current != nil {
+				current.Right = node
+			}
+			stack = append(stack, node)
+			current = nil
+		case ASSIGN:
+			node = &Node{Type: ASSIGNMENT, Value: token.Literal}
+			if len(stack) > 0 {
+				node.Left = stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+			}
+			stack = append(stack, node)
+		case PLUS, MINUS, ASTERISK, SLASH:
+			node = &Node{Type: EXPRESSION, Value: token.Literal}
+			if len(stack) > 0 {
+				node.Left = stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+			}
+			if len(stack) > 0 {
+				node.Right = stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+			}
+			stack = append(stack, node)
+			current = node
+		case SEMICOLON:
+			if len(stack) > 0 {
+				statements = append(statements, Statement{Node: stack[0]})
+				stack = nil
+			}
+		case LPAREN, RPAREN:
+
+		case EOF:
+			if len(stack) > 0 {
+				statements = append(statements, Statement{Node: stack[0]})
+			}
+		default:
+
+		}
+	}
+
 	return statements
-}
-
-func parseBlock(tokens []tokenizer.Token, i *int) []Node {
-	var block []Node
-	for tokens[*i].Type != tokenizer.RCURLY {
-		block = append(block, Parse(tokens)[*i])
-		*i++
-	}
-	return block
-}
-
-func parseExpression(tokens []tokenizer.Token, i *int) Expression {
-	token := tokens[*i]
-
-	switch token.Type {
-	case tokenizer.INT:
-		return &IntegerLiteral{Value: atoi(token.Literal)}
-	case tokenizer.IDENT:
-		left := &Identifier{Name: token.Literal}
-		*i++
-		operator := tokens[*i].Literal
-		*i++
-		right := parseExpression(tokens, i)
-		return &InfixExpression{Left: left, Operator: operator, Right: right}
-	}
-	return nil
-}
-
-func atoi(str string) int {
-	num, _ := strconv.Atoi(str)
-	return num
 }
