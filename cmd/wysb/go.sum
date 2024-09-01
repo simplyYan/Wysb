@@ -1,0 +1,16 @@
+github.com/simplyYan/Wysb/src/environment v0.0.0-20240901145127-2a71514d9cab h1:RF2ERpzR6CPLlMi5F4m0idWl6axX5LxyRkwtk98W3rM=
+github.com/simplyYan/Wysb/src/environment v0.0.0-20240901145127-2a71514d9cab/go.mod h1:B7eOq6DxQ5n0PDFI/tQQyvxALcVHQd6oMiTbFItxiuM=
+github.com/simplyYan/Wysb/src/environment v0.0.0-20240901150216-bb5b0847535b h1:tDOkQ/+PKjQ0QYnHqYIhQ4XS7JQ8wGQ8O6VOrNZrnQo=
+github.com/simplyYan/Wysb/src/environment v0.0.0-20240901150216-bb5b0847535b/go.mod h1:B7eOq6DxQ5n0PDFI/tQQyvxALcVHQd6oMiTbFItxiuM=
+github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901145127-2a71514d9cab h1:YBQOK/FP2XPf5klds5zb5r8nPIflqFqmNPZPbDEbmm4=
+github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901145127-2a71514d9cab/go.mod h1:MOKioqkwItjCzqMzufhXy5pnqBuDuiaZV/eZHd7yYG0=
+github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901150216-bb5b0847535b h1:pdZy2oY2ztAWj9Csqynv/mGCJABBVdN2U1EMQlBrdbg=
+github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901150216-bb5b0847535b/go.mod h1:OuB8YAeYmQ6xF3Kl4JD6gcH3hFrYBawsvSF49/QBfdE=
+github.com/simplyYan/Wysb/src/parser v0.0.0-20240901145127-2a71514d9cab h1:rvsql9W0lFc4xVbTFDVbeD+yBtj57hs4E7zZC3HkbNA=
+github.com/simplyYan/Wysb/src/parser v0.0.0-20240901145127-2a71514d9cab/go.mod h1:rnzjh9UrNJxoTVWCu3bJlIakiQpN/wwrtpbiAE1Wqn4=
+github.com/simplyYan/Wysb/src/parser v0.0.0-20240901150216-bb5b0847535b h1:++odJZaWSPm6iTVg5flt8FpGBEWjmbfGTXMGy+1hlBo=
+github.com/simplyYan/Wysb/src/parser v0.0.0-20240901150216-bb5b0847535b/go.mod h1:WM6Y5BWjD1QQYrQqCEGJuGTRTi4IEx6DmRLiQtc6efQ=
+github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901145127-2a71514d9cab h1:cFQwwsq/oRvghl9PErQrOBgVI5+siZCyXvN9ES3FVwI=
+github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901145127-2a71514d9cab/go.mod h1:U9rAituQIBCCbO1EAW+V5ZbGSg4T7j9RcvHlZA6wRd8=
+github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901150216-bb5b0847535b h1:bd0+onxpIERmoMUKcoK6QuhN3uAvJtpz5BuBU2OMs1Y=
+github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901150216-bb5b0847535b/go.mod h1:U9rAituQIBCCbO1EAW+V5ZbGSg4T7j9RcvHlZA6wRd8=
