@@ -17,6 +17,33 @@ import json
 import re
 import string
 import ctypes
+import subprocess
+
+def CheckDeps():
+    try:
+        system_platform = platform.system()
+
+        python_installed = subprocess.call(['python', '--version'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+
+        pyinstaller_installed = subprocess.call(['pyinstaller', '--version'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+
+        if not python_installed:
+            if system_platform == 'Windows':
+                os.system('winget install Python.Python.3')
+            elif system_platform == 'Linux':
+                os.system('sudo apt-get install python3')
+            elif system_platform == 'Darwin':  
+                os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
+                os.system('brew install python3')
+
+        if not pyinstaller_installed:
+            subprocess.call([sys.executable, '-m', 'pip', 'install', 'pyinstaller'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    except:
+        pass  
+
+
+CheckDeps()
 
 class wysb:
     class resfilt:
@@ -203,7 +230,24 @@ class WysbCompiler:
         executable_code = f"""
 import os
 import sys
-from numba import jit
+import argparse
+import importlib.util
+from numba import jit, int32, int64, float32, float64, njit
+import platform
+import time
+import random
+import threading
+import http
+import configparser
+import logging
+import socket
+import concurrent
+import math
+import json
+import re
+import string
+import ctypes
+import subprocess
 
 def main():
     {self.wysb_to_python(wysb_code)}
