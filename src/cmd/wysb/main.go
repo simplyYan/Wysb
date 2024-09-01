@@ -14,7 +14,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: mylang <file>")
+		fmt.Println("Usage: wysb <file>")
 		return
 	}
 

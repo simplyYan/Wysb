@@ -1,12 +1,12 @@
-# github.com/simplyYan/Wysb/src/environment v0.0.0-20240901145127-2a71514d9cab
+# github.com/simplyYan/Wysb/src/environment v0.0.0-20240901150216-bb5b0847535b
 ## explicit; go 1.22.4
 github.com/simplyYan/Wysb/src/environment
-# github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901145127-2a71514d9cab
+# github.com/simplyYan/Wysb/src/evaluator v0.0.0-20240901150216-bb5b0847535b
 ## explicit; go 1.22.4
 github.com/simplyYan/Wysb/src/evaluator
-# github.com/simplyYan/Wysb/src/parser v0.0.0-20240901145127-2a71514d9cab
+# github.com/simplyYan/Wysb/src/parser v0.0.0-20240901150216-bb5b0847535b
 ## explicit; go 1.22.4
 github.com/simplyYan/Wysb/src/parser
-# github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901145127-2a71514d9cab
+# github.com/simplyYan/Wysb/src/tokenizer v0.0.0-20240901150216-bb5b0847535b
 ## explicit; go 1.22.4
 github.com/simplyYan/Wysb/src/tokenizer

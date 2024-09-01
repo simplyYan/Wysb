@@ -19,3 +19,7 @@ func (env *Environment) Get(name string) (interface{}, bool) {
 	val, ok := env.variables[name]
 	return val, ok
 }
+
+func (env *Environment) Variables() map[string]interface{} {
+	return env.variables
+}
