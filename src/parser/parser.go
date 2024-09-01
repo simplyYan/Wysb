@@ -1,110 +1,105 @@
-// parser/parser.go
+// src/parser.go
 package parser
 
 import (
-	"fmt"
-	"strconv"
-
-	"github.com/simplyYan/Wysb/src/tokenizer"
+	"strings"
+	"unicode"
 )
 
-type Node interface {
-	String() string
+type TokenType int
+
+const (
+	ILLEGAL TokenType = iota
+	EOF
+	IDENTIFIER
+	INT
+	ASSIGN
+	PLUS
+	MINUS
+	ASTERISK
+	SLASH
+	LPAREN
+	RPAREN
+	// Adicione mais tokens conforme necessário
+)
+
+// Token representa um token com seu tipo e valor literal
+type Token struct {
+	Type    TokenType
+	Literal string
 }
 
-type LetStatement struct {
-	Name  string
-	Type  string
-	Value Expression
-}
+// Tokenize converte uma string de código fonte em uma lista de tokens
+func Tokenize(input string) []Token {
+	var tokens []Token
+	runes := []rune(input)
 
-func (ls *LetStatement) String() string {
-	return fmt.Sprintf("let %s: %s = %s", ls.Name, ls.Type, ls.Value.String())
-}
+	for i := 0; i < len(runes); {
+		ch := runes[i]
 
-type Expression interface {
-	Node
-}
-
-type IntegerLiteral struct {
-	Value int
-}
-
-func (il *IntegerLiteral) String() string {
-	return fmt.Sprintf("%d", il.Value)
-}
-
-type Identifier struct {
-	Name string
-}
-
-func (id *Identifier) String() string {
-	return id.Name
-}
-
-type InfixExpression struct {
-	Left     Expression
-	Operator string
-	Right    Expression
-}
-
-func (ie *InfixExpression) String() string {
-	return fmt.Sprintf("(%s %s %s)", ie.Left.String(), ie.Operator, ie.Right.String())
-}
-
-func Parse(tokens []tokenizer.Token) []Node {
-	var statements []Node
-	i := 0
-
-	for i < len(tokens) {
-		switch tokens[i].Type {
-		case tokenizer.LET:
+		if unicode.IsSpace(ch) {
 			i++
-			if tokens[i].Type != tokenizer.IDENT {
-				panic("expected identifier after 'let'")
-			}
-			name := tokens[i].Literal
-			i++
-			if tokens[i].Type != tokenizer.COLON {
-				panic("expected ':' after identifier")
-			}
-			i++
-			if tokens[i].Type != tokenizer.IDENT {
-				panic("expected type after ':'")
-			}
-			varType := tokens[i].Literal
-			i++
-			if tokens[i].Type != tokenizer.ASSIGN {
-				panic("expected '=' after type")
-			}
-			i++
-			value := parseExpression(tokens, &i)
-			statements = append(statements, &LetStatement{Name: name, Type: varType, Value: value})
+			continue
 		}
+
+		switch ch {
+		case '=':
+			tokens = append(tokens, Token{Type: ASSIGN, Literal: string(ch)})
+		case '+':
+			tokens = append(tokens, Token{Type: PLUS, Literal: string(ch)})
+		case '-':
+			tokens = append(tokens, Token{Type: MINUS, Literal: string(ch)})
+		case '*':
+			tokens = append(tokens, Token{Type: ASTERISK, Literal: string(ch)})
+		case '/':
+			tokens = append(tokens, Token{Type: SLASH, Literal: string(ch)})
+		case '(':
+			tokens = append(tokens, Token{Type: LPAREN, Literal: string(ch)})
+		case ')':
+			tokens = append(tokens, Token{Type: RPAREN, Literal: string(ch)})
+		default:
+			if isLetter(ch) {
+				identifier := readIdentifier(runes, &i)
+				tokens = append(tokens, Token{Type: IDENTIFIER, Literal: identifier})
+				continue
+			} else if isDigit(ch) {
+				number := readNumber(runes, &i)
+				tokens = append(tokens, Token{Type: INT, Literal: number})
+				continue
+			} else {
+				tokens = append(tokens, Token{Type: ILLEGAL, Literal: string(ch)})
+			}
+		}
+
 		i++
 	}
 
-	return statements
+	tokens = append(tokens, Token{Type: EOF, Literal: ""})
+	return tokens
 }
 
-func parseExpression(tokens []tokenizer.Token, i *int) Expression {
-	token := tokens[*i]
+func isLetter(ch rune) bool {
+	return unicode.IsLetter(ch)
+}
 
-	switch token.Type {
-	case tokenizer.INT:
-		return &IntegerLiteral{Value: atoi(token.Literal)}
-	case tokenizer.IDENT:
-		left := &Identifier{Name: token.Literal}
-		*i++
-		operator := tokens[*i].Literal
-		*i++
-		right := parseExpression(tokens, i)
-		return &InfixExpression{Left: left, Operator: operator, Right: right}
+func isDigit(ch rune) bool {
+	return unicode.IsDigit(ch)
+}
+
+func readIdentifier(input []rune, start *int) string {
+	var sb strings.Builder
+	for *start < len(input) && isLetter(input[*start]) {
+		sb.WriteRune(input[*start])
+		*start++
 	}
-	return nil
+	return sb.String()
 }
 
-func atoi(str string) int {
-	num, _ := strconv.Atoi(str)
-	return num
+func readNumber(input []rune, start *int) string {
+	var sb strings.Builder
+	for *start < len(input) && isDigit(input[*start]) {
+		sb.WriteRune(input[*start])
+		*start++
+	}
+	return sb.String()
 }

@@ -1,4 +1,3 @@
-// cmd/wysb/main.go
 package main
 
 import (
@@ -8,8 +7,7 @@ import (
 
 	"github.com/simplyYan/Wysb/src/environment"
 	"github.com/simplyYan/Wysb/src/evaluator"
-	"github.com/simplyYan/Wysb/src/parser"
-	"github.com/simplyYan/Wysb/src/tokenizer"
+	"github.com/simplyYan/Wysb/src/parser" 
 )
 
 func main() {
@@ -25,7 +23,7 @@ func main() {
 		return
 	}
 
-	tokens := tokenizer.Tokenize(string(source))
+	tokens := parser.Tokenize(string(source))
 	ast := parser.Parse(tokens)
 
 	env := environment.NewEnvironment()

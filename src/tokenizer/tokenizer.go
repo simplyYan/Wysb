@@ -10,6 +10,7 @@ type TokenType int
 const (
 	ILLEGAL TokenType = iota
 	EOF
+	FOR
 	IDENT
 	INT
 	ASSIGN

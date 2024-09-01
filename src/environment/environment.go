@@ -20,6 +20,15 @@ func (env *Environment) Get(name string) (interface{}, bool) {
 	return val, ok
 }
 
+func (env *Environment) Remove(name string) {
+	delete(env.variables, name)
+}
+
+func (env *Environment) Exists(name string) bool {
+	_, ok := env.variables[name]
+	return ok
+}
+
 func (env *Environment) Variables() map[string]interface{} {
 	return env.variables
 }

@@ -1,1 +1,9 @@
-print("Testing It...")
+let x: int = 10;
+let y: int = 20;
+let z: int = x + y;
+
+if z > 15 {
+    print("z é maior que 15");
+} else {
+    print("z é menor ou igual a 15");
+}
