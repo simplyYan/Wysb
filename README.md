@@ -35,8 +35,11 @@ You can install Wysb with Wysbup, a unique tool for installing and updating Wysb
 Wysb has extensive documentation with real-life examples and easy-to-understand explanations. To read the Wysb documentation, you can access the repository's Wiki.
 
 -------------------
+
+<p align="center">
 <img src='https://raw.githubusercontent.com/simplyYan/Wysb/main/Platypuzer.png' width="235" alt="Platypuzer: The Wysb mascot"></img><br>
 Platypuzer: The Wysb mascot
+</p>
 
 ## ⚖️ License
 Wysb is currently licensed under CC0-1.0. Before using, modifying or redistributing, it is recommended that you read the license.
