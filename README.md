@@ -1,4 +1,4 @@
-<img src="./Wysb.png" width="340"></img>
+<img src="./Wysb.png" width="250"></img>
 -------------------
 ### *Announcement: As of 14/09/2024, Wysb has become a closed-source language. The code of the old versions will still be available, but the new versions will have their code protected. 
 Wysb is a general-purpose high-level programming language developed by Wesley Yan Soares Brehmer (who lives up to the name of the language, which is short for the author's name) to be an easy, fast, reliable, secure, broad and lightweight solution. Despite being high-level, Wysb has insane performance, reaching the same level as low-level languages.
