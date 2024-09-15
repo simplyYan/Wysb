@@ -29,6 +29,7 @@ You can install Wysb with Wysbup, a unique tool for installing and updating Wysb
 - Mediafire (NOT RECOMMENDED, FILES MAY BE MISSING): https://www.mediafire.com/folder/j9o1w5v1vpwcz/Wysb
 - Uptodown (Windows): https://wysbup.en.uptodown.com/windows
 
+-> [The installation of Wysb for Linux 32-bit and macOS 32-bit is different. Click here to find out how.](https://github.com/simplyYan/Wysb/blob/main/macOS%20%26%20Linux%20x32.md)
 ## 📜 Documentation
 Wysb has extensive documentation with real-life examples and easy-to-understand explanations. To read the Wysb documentation, you can access the repository's Wiki.
 
